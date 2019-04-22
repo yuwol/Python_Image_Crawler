@@ -24,30 +24,17 @@ def search(dirname):
                 s = requests.Session()
 
                 with requests.Session() as s:
-                    # 우선 클리앙 홈페이지에 들어가 봅시다.
-                    first_page = s.get("https://www.arzon.jp/itemlist.html?t=&m=all&s=&q=" + term)
-                    html = first_page.text
-                    soup = bs(html, 'html.parser')
-                    csrf = soup.find('td', {'class': 'yes'}) # input태그 중에서 name이 _csrf인 것을 찾습니다.
-                    children = csrf.findChildren("a" , recursive=False)
-                    redirection = ''
-                    for child in children:
-                        redirection = child['href']
-                        print(child['href'])
-
-                    post_one = s.get('https://www.arzon.jp' + redirection)
-                    soup = bs(post_one.text, 'html.parser') # Soup으로 만들어 줍시다.
-                    contents = soup.select('dl.hentry dt a img')
-                    print(contents[0]['src']) # 글내용도 마찬가지겠지요?
-                    downloadURL = 'https:' + contents[0]['src'].replace('S','L')                                  
+                    downloadURL = 'http://video-jav.net/wp-content/uploads/image-' + term + '.jpg'
                     print(downloadURL)
                     #download(downloadURL, os.path.join(os.getcwd(), term + '.jpg'))
 
-                    headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
-#                    print(result.content.decode())
-
-                    r = requests.get(downloadURL, allow_redirects=True, headers=headers)
-                    print(r)
+                    import urllib.request
+                    try:
+                        urllib.request.urlretrieve(downloadURL, os.path.join(os.getcwd(), term + '.jpg')) 
+                    except urllib.error.HTTPError as e:
+                        print(e.__dict__)
+                    except urllib.error.URLError as e:
+                        print(e.__dict__)
                 if not dirname == os.getcwd():              
                     ext = os.path.splitext(full_filename)[-1]
                     videos = ['.mp4','.avi','.mpg','.mpeg']
